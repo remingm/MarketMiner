@@ -103,18 +103,14 @@ MyStock
 print "Loading 494(why only 494?) of the S&P500"
 f = open('sp500.csv','rb')
 reader = csv.reader(f)
-rows = list(reader)
-print rows[0][0]
-print "zZZZZ"
-print MyStock(rows[0][0])
-print "zzz"
+
 i=0
 for row in reader:
 	i+=1
 	watchList.append(MyStock(row[0]))
 	print str(i) +") "+ str(row) 
-
-
+	
+	sys.stdout.flush()
 # watchList.append(MyStock("AAPL")) 
 # watchList.append(MyStock("GOOG"))
 # watchList.append(MyStock("IBM"))
@@ -166,6 +162,7 @@ sys.stdout.flush()
 
 cycles = 0
 priceRequests = 0
+timeConst = 6 #change along with sleep time
 
 while cycles < 98: # only run for 6.5 hours (best to start at 6:30AM here, 9:30AM Eastern Time. (98 if sleep is 240) (390 if 60) 
 	i=0
@@ -180,22 +177,24 @@ while cycles < 98: # only run for 6.5 hours (best to start at 6:30AM here, 9:30A
 			currPrice = symbol.stock.get_price()
 			symbol.priceHistory.append(currPrice)#append this data to price history
 
-			print str(i) +") Price of "+ str(symbol)+ ": $"+ str(currPrice) + " currPrice/30 minutes ago = ("+str("%.2f" % (float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-6])))+"%)"
+			
 
-			if len(symbol.priceHistory)>30: 
+			if len(symbol.priceHistory) > timeConst: # 6 if sleep time is 240, 30 if sleep time is 60 
+				print str(i) +") Price of "+ str(symbol)+ ": $"+ str(currPrice) + " currPrice/30 minutes ago = ("+str("%.2f" % (float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-timeConst])))+"%)"
 				#if down 1.5% over 30 minutes, buy #changed 30 to 6 when using 4(5) minute sleep time
-				if float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-6]) < .985:
-					print "Buying: Compared current price("+str(currPrice)+") to price 30 minutes ago("+str(symbol.priceHistory[len(symbol.priceHistory)-30])+")"
+				if float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-timeConst]) < .985:
+					print "Buying: Compared current price("+str(currPrice)+") to price 30 minutes ago("+str(symbol.priceHistory[len(symbol.priceHistory)-timeConst])+")"
 					symbol.buyOne()
 					print "Shares owned of "+str(symbol)+": " +str(symbol.numShares)
 
 				if symbol.numShares > 0: 
 					#once owned, if goes up by 0.75% over 15 minutes, sell #changed 15 to 3 (15/5)=3
-					if float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-3]) > 1.0075:
-						print "Selling: Compared current price("+str(currPrice)+") to price 15 minutes ago("+str(symbol.priceHistory[len(symbol.priceHistory)-15])+")"
+					if float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-timeConst/2]) > 1.0075:
+						print "Selling: Compared current price("+str(currPrice)+") to price 15 minutes ago("+str(symbol.priceHistory[len(symbol.priceHistory)-timeConst/2])+")"
 						symbol.sellAll()
 						print "Shares owned of "+str(symbol)+": " +str(symbol.numShares)
-
+			else:
+				print str(i) +") Price of "+ str(symbol)+ ": $"+ str(currPrice)
 		except Exception as e: #This should only happen if error recieving data from Yahoo
 			print e
 
@@ -205,6 +204,7 @@ while cycles < 98: # only run for 6.5 hours (best to start at 6:30AM here, 9:30A
 	sys.stdout.flush()
 	#time.sleep(60)# have sleep as 60 seconds for the algorithm's minute count to work properly. 
 	time.sleep(240)#using 4 minute sleep time + 1 minute assumed load prices time when portfolio size is large. 
+	# change timeConst to 6 if sleep is 240, if sleep is 60 change timeConst to 30
 	# (probably more than 1 minute load time realistically for 490+ stocks)
 	# this probably also helps keep yahoo off our backs
 
