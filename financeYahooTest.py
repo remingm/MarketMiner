@@ -67,12 +67,16 @@ class MyStock:
 	def __str__ (self):
 		return str(self.symbol +"("+str(self.numShares)+")")
 
-	def buyOne(self):
+	def buySome(self):
 		price = self.stock.get_price()
 		global myBalance
 		print "Buying a share of "+str(self.symbol)+" for $"+str(price)
-		myBalance -= float(price)
-		self.numShares += 1
+		if price > 800:
+			sharesBought = 1
+		else:
+			sharesBought = 800 // price
+		myBalance -= float(price) * sharesBought
+		self.numShares += sharesBought
 		print self.stock.get_trade_datetime()
 		printNetWorth()
 
@@ -184,7 +188,7 @@ while cycles < 98: # only run for 6.5 hours (best to start at 6:30AM here, 9:30A
 				#if down 1.5% over 30 minutes, buy #changed 30 to 6 when using 4(5) minute sleep time
 				if float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-timeConst]) < .985:
 					print "Buying: Compared current price("+str(currPrice)+") to price 30 minutes ago("+str(symbol.priceHistory[len(symbol.priceHistory)-timeConst])+")"
-					symbol.buyOne()
+					symbol.buySome()
 					print "Shares owned of "+str(symbol)+": " +str(symbol.numShares)
 
 				if symbol.numShares > 0: 
