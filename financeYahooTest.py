@@ -2,8 +2,8 @@
 
 # Ian Hammerstrom
 # 02/02/16
-#if down 1.5% over 30 minutes, buy
-#then, once owned, if goes up by 0.75% over 15 minutes, sell 
+#if down __ over 30 minutes, buy
+#then, once owned, if goes up by __ over 15 minutes, sell 
 
 from yahoo_finance import Share
 # if yahoo_finance isn't installed, enter as a command: "[sudo] pip install yahoo-finance"
@@ -186,14 +186,14 @@ while cycles < 98: # only run for 6.5 hours (best to start at 6:30AM here, 9:30A
 			if len(symbol.priceHistory) > timeConst: # 6 if sleep time is 240, 30 if sleep time is 60 
 				print str(i) +") Price of "+ str(symbol)+ ": $"+ str(currPrice) + " currPrice/30 minutes ago = ("+str("%.2f" % (float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-timeConst])))+"%)"
 				#if down 1.5% over 30 minutes, buy #changed 30 to 6 when using 4(5) minute sleep time
-				if float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-timeConst]) < .985:
+				if float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-timeConst]) < .98:
 					print "Buying: Compared current price("+str(currPrice)+") to price 30 minutes ago("+str(symbol.priceHistory[len(symbol.priceHistory)-timeConst])+")"
 					symbol.buySome()
 					print "Shares owned of "+str(symbol)+": " +str(symbol.numShares)
 
 				if symbol.numShares > 0: 
 					#once owned, if goes up by 0.75% over 15 minutes, sell #changed 15 to 3 (15/5)=3
-					if float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-timeConst/2]) > 1.0075:
+					if float(currPrice)/float(symbol.priceHistory[len(symbol.priceHistory)-timeConst/2]) > 1.006:
 						print "Selling: Compared current price("+str(currPrice)+") to price 15 minutes ago("+str(symbol.priceHistory[len(symbol.priceHistory)-timeConst/2])+")"
 						symbol.sellAll()
 						print "Shares owned of "+str(symbol)+": " +str(symbol.numShares)
