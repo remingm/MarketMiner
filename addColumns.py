@@ -10,25 +10,28 @@ stockData = pd.read_csv('sp66yrs.csv').drop('Adj Close', axis=1)
 #data = np.array([1.34589,1.33162,1.2234], numpy.float)
 closeNdarray = np.array(stockData['Close'].values, np.float)
 
-timeP = 14
+timeStats = 7
+predFuture = 1
 
-stockData['RSI'] = talib.RSI(closeNdarray, timeperiod = timeP)
-BBupper, garbage, BBlower = talib.BBANDS(closeNdarray, timeperiod = timeP)
+stockData['RSI'] = talib.RSI(closeNdarray, timeperiod = timeStats)
+BBupper, garbage, BBlower = talib.BBANDS(closeNdarray, timeperiod = timeStats)
 stockData['BBandUpper'] = BBupper
 stockData['BBandLower'] = BBlower
-stockData['CMOData'] = talib.CMO(closeNdarray, timeperiod = timeP)
-stockData['DMIData'] = talib.DX(high=stockData['High'].values,low=stockData['Low'].values, close=closeNdarray, timeperiod = timeP)
-stockData['MFI'] = talib.MFI(high=stockData['High'].values,low=stockData['Low'].values, close=closeNdarray, volume=stockData['Volume'].values.astype(float), timeperiod = timeP)
-stockData['MA'] = talib.MA(closeNdarray, timeperiod = timeP)
-stockData['STDDEV'] = talib.STDDEV(closeNdarray, timeperiod = timeP)
+stockData['CMOData'] = talib.CMO(closeNdarray, timeperiod = timeStats)
+stockData['DMIData'] = talib.DX(high=stockData['High'].values,low=stockData['Low'].values, close=closeNdarray, timeperiod = timeStats)
+stockData['MFI'] = talib.MFI(high=stockData['High'].values,low=stockData['Low'].values, close=closeNdarray, volume=stockData['Volume'].values.astype(float), timeperiod = timeStats)
+stockData['MA'] = talib.MA(closeNdarray, timeperiod = timeStats)
+stockData['STDDEV'] = talib.STDDEV(closeNdarray, timeperiod = timeStats)
 
-stockData['TomorrowClose'] = stockData['Close'].shift(-1)
+stockData['futureClose'] = stockData['Close'].shift(-predFuture)
 
-stockData['TomorrowDif'] = stockData['Close'].diff(-1)
-stockData['TomorrowDif%'] = stockData['Close'].pct_change(-1) * -100.0
+stockData['futureDif'] = stockData['Close'].diff(-predFuture) * -1
+stockData['futureDif%'] = stockData['Close'].pct_change(-predFuture) * -1
 
+
+# -1 if down, 1 if up
 upDown = []
-tomDif =  stockData['TomorrowDif']
+tomDif =  stockData['futureDif']
 for row in tomDif:
 	if row > 0:
 		upDown.append(1)
@@ -36,7 +39,11 @@ for row in tomDif:
 		upDown.append(-1)
 stockData['upDown'] = np.array(upDown)
 
-stockData = stockData[timeP:-1]
+
+
+
+
+stockData = stockData[timeStats:-predFuture]
 
 stockData.to_csv('sp66yrsNewCols.csv')
 

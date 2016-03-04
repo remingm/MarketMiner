@@ -17,7 +17,7 @@ train = pandas.read_csv('sp66yrsNewCols.csv')
 #y = train['percent_change_next_weeks_price']
 
 
-predictFor = 'TomorrowDif'
+predictFor = 'futureDif'
 
 
 y = train[predictFor]
@@ -42,6 +42,8 @@ regressor = skflow.TensorFlowDNNRegressor(hidden_units=[10, 10],
     verbose = 1)
 # Fit
 regressor.fit(X_train, y_train, logdir='/tmp/tf_examples/mm/')
+
+
 
 # Predict and score
 score = metrics.mean_squared_error(regressor.predict(scaler.fit_transform(X_test)), y_test)
@@ -70,7 +72,8 @@ train['PRED:'+predictFor] = predicted_y
 
 train.to_csv('sp66yrsNewCols.csv')
 
-#print train
+print train.describe()
+
 # outFile = open("predicted_y", 'w')
 # for line in predicted_y:
 #     outFile.write(str(line[0]))
