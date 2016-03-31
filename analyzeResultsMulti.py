@@ -84,7 +84,7 @@ stopLoss = 5
 lookBackPeriod = 1
 
 print "Beginning Trading..."
-i = lookBackPeriod
+i = lookBackPeriod+1
 
 while i < maxLen:
 	roundCash = 0
@@ -93,7 +93,7 @@ while i < maxLen:
 		if i < len(stock.closeHistory):
 
 			#if pred[i] > 0.03:
-			if roundCash > -100 and cash > -100 and float(stock.closeHistory[i])/float(stock.closeHistory[i-lookBackPeriod]) < .985 and float(stock.closeHistory[i])/float(stock.closeHistory[i-lookBackPeriod]) > 0.94:
+			if roundCash > -100 and cash > -200 and float(stock.closeHistory[i])/float(stock.closeHistory[i-lookBackPeriod]) < .985 and float(stock.closeHistory[i])/float(stock.closeHistory[i-(lookBackPeriod + 1)]) < 0.99:# and float(stock.closeHistory[i])/float(stock.closeHistory[i-(lookBackPeriod + 2)]) < 0.99:
 			#if cash > -100 and stock.rsi[i] < 10:
 				cash -= stock.closeHistory[i]
 				roundCash -= stock.closeHistory[i]
@@ -232,11 +232,10 @@ print "minCash/netWorth", minCash/netWorth * -1
 
 print "	   gains | losses"
 print "total |", gainTotal, cash-gainTotal
-print "avg   |", gainTotal/transactSuccesses, (cash-gainTotal)/(totalTransacts-transactSuccesses)
 
 print ""
 #print "Total shorts: "+ str(totalShorts) + ", %successful: "+ str(float(shortSuccesses)/totalShorts)
-print "Total transactions: "+ str(totalTransacts) + ", %successful: "+ str(float(transactSuccesses)/totalTransacts*100.0)
+print "Total transactions: "+ str(totalTransacts) + ", %successful: "+ str((float(transactSuccesses)/totalTransacts)*100.0)
 print "Total successful:", transactSuccesses
 #print stockData.describe()
 #print stockData['RSI']
