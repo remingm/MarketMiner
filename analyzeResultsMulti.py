@@ -93,8 +93,8 @@ while i < maxLen:
 		if i < len(stock.closeHistory):
 
 			#if pred[i] > 0.03:
-			if roundCash > -100 and cash > -200 and float(stock.closeHistory[i])/float(stock.closeHistory[i-lookBackPeriod]) < .985 and float(stock.closeHistory[i])/float(stock.closeHistory[i-(lookBackPeriod + 1)]) < 0.99:# and float(stock.closeHistory[i])/float(stock.closeHistory[i-(lookBackPeriod + 2)]) < 0.99:
-			#if cash > -100 and stock.rsi[i] < 10:
+			#if roundCash > -100 and cash > -200 and float(stock.closeHistory[i])/float(stock.closeHistory[i-lookBackPeriod]) < .985 and float(stock.closeHistory[i])/float(stock.closeHistory[i-(lookBackPeriod + 1)]) < 0.99:# and float(stock.closeHistory[i])/float(stock.closeHistory[i-(lookBackPeriod + 2)]) < 0.99:
+			if roundCash > -100 and cash > -200 and stock.rsi[i] < 30:
 				cash -= stock.closeHistory[i]
 				roundCash -= stock.closeHistory[i]
 
@@ -106,8 +106,8 @@ while i < maxLen:
 					minCash = cash
 
 			#elif shares > 0 and pred[i] < -0.007:
-			elif stock.shares > 0 and (stock.tempBoughtCost - (stock.closeHistory[i] * stock.shares) > stopLoss or float(stock.closeHistory[i])/float(stock.closeHistory[i-lookBackPeriod]) > 1.001):
-			#elif stock.shares > 0 and (stock.tempBoughtCost - (stock.closeHistory[i] * stock.shares) > stopLoss or stock.rsi[i] > 70):
+			#elif stock.shares > 0 and (stock.tempBoughtCost - (stock.closeHistory[i] * stock.shares) > stopLoss or float(stock.closeHistory[i])/float(stock.closeHistory[i-lookBackPeriod]) > 1.001):
+			elif stock.shares > 0 and (stock.tempBoughtCost - (stock.closeHistory[i] * stock.shares) > stopLoss or stock.rsi[i] > 70):
 				if stock.tempBoughtCost < stock.closeHistory[i] * stock.shares:
 					transactSuccesses += 1
 					# print "profitable", stock.closeHistory[i]*stock.shares - stock.tempBoughtCost, i
@@ -230,8 +230,6 @@ print "maxNetWorth", maxNetWorth
 print "max/min worth:", maxNetWorth/minNetWorth * -1 
 print "minCash/netWorth", minCash/netWorth * -1
 
-print "	   gains | losses"
-print "total |", gainTotal, cash-gainTotal
 
 print ""
 #print "Total shorts: "+ str(totalShorts) + ", %successful: "+ str(float(shortSuccesses)/totalShorts)
